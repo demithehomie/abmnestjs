@@ -10,12 +10,39 @@ datasource db {
 model User {
   id         Int       @id @default(autoincrement()) @db.UnsignedInt
   name       String    @db.VarChar(63)
-  email      String    @db.VarChar(127)
+  email      String    @unique @db.VarChar(127)
+  phone      String?   @db.VarChar(20)
   password   String    @db.VarChar(127)
   birthAt    DateTime? @db.Date 
   role       Int       @default(1)
   createdAt  DateTime  @default(now()) @db.Timestamp(0)
-  updatedtAt DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime  @default(now()) @updatedAt @db.Timestamp(0)
+  cars       Car[]
 
   @@map("users")
+}
+
+model Car {
+  id              Int       @id @default(autoincrement()) @db.UnsignedInt
+  userId          Int       @db.UnsignedInt
+  licensePlate    String    @unique @db.VarChar(10)
+  brand           String    @db.VarChar(50)
+  model           String    @db.VarChar(100)
+  year            Int
+  color           String?   @db.VarChar(30)
+  mileage         Int?
+  price           Decimal   @db.Decimal(10, 2)
+  description     String?   @db.Text
+  docsOk          Boolean   @default(false)
+  ipvaYear        Int?
+  licensingYear   Int?
+  hasInsurance    Boolean   @default(false)
+  status          String    @default("available") @db.VarChar(20)
+  images          String?   @db.Text
+  createdAt       DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime  @default(now()) @updatedAt @db.Timestamp(0)
+  
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("cars")
 }
